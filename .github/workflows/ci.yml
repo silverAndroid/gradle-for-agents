@@ -77,20 +77,24 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - name: Trigger Totem CI (GitHub Repository Dispatch)
-        if: "${{ secrets.TOTEM_TRIGGER_TOKEN != '' }}"
+        env:
+          TOTEM_TOKEN: ${{ secrets.TOTEM_TRIGGER_TOKEN }}
+        if: ${{ env.TOTEM_TOKEN != '' }}
         run: |
           echo "Triggering totem dispatch..."
           curl -L -X POST \
             -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ secrets.TOTEM_TRIGGER_TOKEN }}" \
+            -H "Authorization: Bearer $TOTEM_TOKEN" \
             https://api.github.com/repos/silverAndroid/totem/dispatches \
             -d '{"event_type": "gfa-updated"}'
 
       - name: Trigger Studio CI (Gitea Webhook)
-        if: "${{ secrets.STUDIO_WEBHOOK_URL != '' }}"
+        env:
+          STUDIO_URL: ${{ secrets.STUDIO_WEBHOOK_URL }}
+        if: ${{ env.STUDIO_URL != '' }}
         run: |
           echo "Triggering studio webhook..."
           curl -L -X POST \
             -H "Content-Type: application/json" \
-            "${{ secrets.STUDIO_WEBHOOK_URL }}" \
+            "$STUDIO_URL" \
             -d '{"event": "gfa-updated"}'
