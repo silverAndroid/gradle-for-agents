@@ -19,6 +19,8 @@ builds:
     goarch:
       - amd64
       - arm64
+    ldflags:
+      - -s -w -X main.version={{.Version}}
 
   - id: gradle-for-agents
     main: ./cmd/gradle-for-agents
@@ -32,6 +34,8 @@ builds:
     goarch:
       - amd64
       - arm64
+    ldflags:
+      - -s -w -X main.version={{.Version}}
 
 archives:
   - format: tar.gz
@@ -39,6 +43,22 @@ archives:
     format_overrides:
       - goos: windows
         format: zip
+
+brews:
+  - name: gradle-for-agents
+    repository:
+      owner: silverAndroid
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    directory: Formula
+    homepage: "https://github.com/silverAndroid/gradle-for-agents"
+    description: "Gradle wrapper for AI agents"
+    install: |
+      bin.install "gradle-for-agents"
+      bin.install "gfa"
+    test: |
+      system "#{bin}/gradle-for-agents --version"
+      system "#{bin}/gfa --version"
 
 changelog:
   sort: asc
