@@ -22,6 +22,20 @@ When agents run standard Gradle builds (`./gradlew build`), they are flooded wit
 
 ## Installation
 
+### As an Agent Skill (for AI Agents)
+You can install this repository as an Agent Skill for compatible AI developer harnesses (like Antigravity, Kilo Code, OpenCode, Cursor, and Claude Code). This teaches agents to autonomously use `gfa` for all Gradle operations in your project.
+
+1. Install the skill in your project workspace:
+   ```bash
+   npx skills add silverAndroid/gradle-for-agents/skills/gfa
+   ```
+
+2. (Optional) Run the setup script to register the `/gfa` custom slash command in Claude Code:
+   ```bash
+   ./.skills/gfa/scripts/setup.sh
+   ```
+   *(Note: Depending on your harness, the path may be `./.skills/gfa/scripts/setup.sh` or `./.agents/skills/gfa/scripts/setup.sh`)*
+
 ### Via Curl (macOS & Linux)
 You can install `gradle-for-agents` and `gfa` globally using the installation script:
 
