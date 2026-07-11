@@ -82,12 +82,32 @@ func Run(gradleArgs []string, showWarnings bool, passThrough bool) int {
 	cmd.Stdout = multiWriter
 	cmd.Stderr = multiWriter
 
+	fmt.Printf("INFO: Logging full output to: %s\n", logFile)
+
+	done := make(chan struct{})
+	go func() {
+		ticker := time.NewTicker(5 * time.Second)
+		defer ticker.Stop()
+		for {
+			select {
+			case <-ticker.C:
+				fmt.Print(".")
+			case <-done:
+				return
+			}
+		}
+	}()
+
 	if err := cmd.Start(); err != nil {
+		close(done)
 		fmt.Fprintf(os.Stderr, "ERROR: Failed to start Gradle: %v\n", err)
 		return 1
 	}
 
 	err = cmd.Wait()
+	close(done)
+	fmt.Println("\nINFO: Build finished, generating summary...")
+
 	exitCode := 0
 	if exitError, ok := err.(*exec.ExitError); ok {
 		exitCode = exitError.ExitCode()
