@@ -22,6 +22,9 @@ func buildBinary(t *testing.T) string {
 }
 
 func TestIntegrationStudio(t *testing.T) {
+	if _, err := os.Stat("../studio"); os.IsNotExist(err) {
+		t.Skip("Skipping integration test: ../studio directory not found")
+	}
 	bin := buildBinary(t)
 	defer os.Remove(bin)
 
@@ -38,6 +41,9 @@ func TestIntegrationStudio(t *testing.T) {
 }
 
 func TestIntegrationTotem(t *testing.T) {
+	if _, err := os.Stat("../totem"); os.IsNotExist(err) {
+		t.Skip("Skipping integration test: ../totem directory not found")
+	}
 	bin := buildBinary(t)
 	defer os.Remove(bin)
 
@@ -54,6 +60,9 @@ func TestIntegrationTotem(t *testing.T) {
 }
 
 func TestIntegrationErrorParsing(t *testing.T) {
+	if _, err := os.Stat("../totem"); os.IsNotExist(err) {
+		t.Skip("Skipping integration test: ../totem directory not found")
+	}
 	bin := buildBinary(t)
 	defer os.Remove(bin)
 

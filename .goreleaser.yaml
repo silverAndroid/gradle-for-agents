@@ -1,0 +1,49 @@
+# GoReleaser configuration file.
+# Reference: https://goreleaser.com/customization/builds/
+version: 2
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: gfa
+    main: ./cmd/gfa
+    binary: gfa
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+
+  - id: gradle-for-agents
+    main: ./cmd/gradle-for-agents
+    binary: gradle-for-agents
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - format: tar.gz
+    name_template: "{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    format_overrides:
+      - goos: windows
+        format: zip
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "merge"

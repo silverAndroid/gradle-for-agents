@@ -1,0 +1,96 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.5'
+          cache: true
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.64.5  # Lock to a stable version compatible with Go 1.26+
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.5'
+          cache: true
+
+      - name: Run tests
+        run: go test -v ./...
+
+  build-check:
+    name: Cross-Compilation Check
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: [linux, darwin, windows]
+        goarch: [amd64, arm64]
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.5'
+          cache: true
+
+      - name: Compile gfa
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+        run: go build -v -o temp_gfa_bin ./cmd/gfa
+
+      - name: Compile gradle-for-agents
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+        run: go build -v -o temp_gfa_main_bin ./cmd/gradle-for-agents
+
+  trigger-downstream:
+    name: Trigger Downstream Pipelines
+    needs: [lint, test, build-check]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Trigger Totem CI (GitHub Repository Dispatch)
+        if: "${{ secrets.TOTEM_TRIGGER_TOKEN != '' }}"
+        run: |
+          echo "Triggering totem dispatch..."
+          curl -L -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.TOTEM_TRIGGER_TOKEN }}" \
+            https://api.github.com/repos/silverAndroid/totem/dispatches \
+            -d '{"event_type": "gfa-updated"}'
+
+      - name: Trigger Studio CI (Gitea Webhook)
+        if: "${{ secrets.STUDIO_WEBHOOK_URL != '' }}"
+        run: |
+          echo "Triggering studio webhook..."
+          curl -L -X POST \
+            -H "Content-Type: application/json" \
+            "${{ secrets.STUDIO_WEBHOOK_URL }}" \
+            -d '{"event": "gfa-updated"}'
