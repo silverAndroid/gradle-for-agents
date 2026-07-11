@@ -32,7 +32,9 @@ func getGradleExecutable() (string, error) {
 	return "", fmt.Errorf("could not find local '%s' or global 'gradle' command", gradlewName)
 }
 
-func Run(gradleArgs []string, showWarnings bool, passThrough bool) int {
+func Run(gradleArgs []string, showWarnings bool, passThrough bool, currentVersion string) int {
+	CheckForUpdates(currentVersion)
+
 	gradleExec, err := getGradleExecutable()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "ERROR: %v\n", err)

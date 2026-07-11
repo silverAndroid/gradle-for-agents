@@ -7,7 +7,7 @@ import (
 	"github.com/silverAndroid/gradle-for-agents/runner"
 )
 
-const version = "1.0.0"
+var version = "1.0.0"
 
 func main() {
 	args := os.Args[1:]
@@ -33,7 +33,7 @@ func main() {
 		}
 	}
 
-	exitCode := runner.Run(gradleArgs, showWarnings, passThrough)
+	exitCode := runner.Run(gradleArgs, showWarnings, passThrough, version)
 	os.Exit(exitCode)
 }
 
