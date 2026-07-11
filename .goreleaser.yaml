@@ -38,27 +38,32 @@ builds:
       - -s -w -X main.version={{.Version}}
 
 archives:
-  - format: tar.gz
+  - formats:
+      - tar.gz
     name_template: "{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     format_overrides:
       - goos: windows
-        format: zip
+        formats:
+          - zip
 
-brews:
+homebrew_casks:
   - name: gradle-for-agents
     repository:
       owner: silverAndroid
       name: homebrew-tap
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
-    directory: Formula
     homepage: "https://github.com/silverAndroid/gradle-for-agents"
     description: "Gradle wrapper for AI agents"
-    install: |
-      bin.install "gradle-for-agents"
-      bin.install "gfa"
-    test: |
-      system "#{bin}/gradle-for-agents --version"
-      system "#{bin}/gfa --version"
+    binaries:
+      - gradle-for-agents
+      - gfa
+    hooks:
+      post:
+        install: |
+          if OS.mac?
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/gradle-for-agents"]
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/gfa"]
+          end
 
 changelog:
   sort: asc
