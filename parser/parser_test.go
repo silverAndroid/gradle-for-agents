@@ -7,7 +7,7 @@ import (
 
 func TestParserSuccessNoWarnings(t *testing.T) {
 	parser := NewParser(false)
-	parser.Write([]byte("BUILD SUCCESSFUL in 2s\n"))
+	_, _ = parser.Write([]byte("BUILD SUCCESSFUL in 2s\n"))
 	
 	if len(parser.errors) > 0 || len(parser.warnings) > 0 {
 		t.Errorf("Expected 0 errors and warnings, got %d errors, %d warnings", len(parser.errors), len(parser.warnings))
@@ -16,7 +16,7 @@ func TestParserSuccessNoWarnings(t *testing.T) {
 
 func TestParserWarnings(t *testing.T) {
 	parser := NewParser(true)
-	parser.Write([]byte("w: some warning\nwarning: another one\nBUILD SUCCESSFUL\n"))
+	_, _ = parser.Write([]byte("w: some warning\nwarning: another one\nBUILD SUCCESSFUL\n"))
 	
 	if len(parser.warnings) != 2 {
 		t.Errorf("Expected 2 warnings, got %d", len(parser.warnings))
@@ -33,7 +33,7 @@ func TestParserTaskFailure(t *testing.T) {
   location: class MainActivity
 5 errors
 `
-	parser.Write([]byte(input))
+	_, _ = parser.Write([]byte(input))
 	// force commit
 	if parser.inErrorContext {
 		parser.commitError()
@@ -59,7 +59,7 @@ func TestParserGeneralFailure(t *testing.T) {
 A problem occurred evaluating root project 'dummy'.
 > Could not find method compile() for arguments...
 `
-	parser.Write([]byte(input))
+	_, _ = parser.Write([]byte(input))
 	// force commit
 	if parser.inErrorContext {
 		parser.commitError()
