@@ -10,7 +10,7 @@ import (
 
 func buildBinary(t *testing.T) string {
 	t.Helper()
-	cmd := exec.Command("go", "build", "-o", "gfa-test-bin")
+	cmd := exec.Command("go", "build", "-o", "gfa-test-bin", "./cmd/gfa")
 	if err := cmd.Run(); err != nil {
 		t.Fatalf("Failed to build gfa binary: %v", err)
 	}
