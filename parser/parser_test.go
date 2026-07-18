@@ -75,3 +75,21 @@ A problem occurred evaluating root project 'dummy'.
 		t.Errorf("Expected error to contain error text, got %s", parser.errors[0])
 	}
 }
+
+func TestParserHasErrors(t *testing.T) {
+	parser := NewParser(true)
+	input := `> Task :apps:forge:shared:checkKotlinGradlePluginConfigurationErrors
+e: ❌ KMP Dependencies Resolution Failure
+Source set 'commonMain' couldn't resolve dependencies for all target platforms
+BUILD SUCCESSFUL in 2s
+`
+	_, _ = parser.Write([]byte(input))
+	// force commit
+	if parser.inErrorContext {
+		parser.commitError()
+	}
+
+	if !parser.HasErrors() {
+		t.Errorf("Expected parser to report errors, but HasErrors() returned false")
+	}
+}

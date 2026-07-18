@@ -119,6 +119,9 @@ func Run(gradleArgs []string, showWarnings bool, passThrough bool, currentVersio
 	}
 
 	// Print TOON output
+	if exitCode == 0 && toonParser.HasErrors() {
+		exitCode = 1
+	}
 	toonParser.PrintSummary(exitCode, logFile)
 
 	return exitCode

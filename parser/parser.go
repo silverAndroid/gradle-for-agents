@@ -117,3 +117,7 @@ func (p *Parser) PrintSummary(exitCode int, logFile string) {
 		fmt.Printf("\nFAILURE: Build failed with exit code %d. Full logs at: %s\n", exitCode, logFile)
 	}
 }
+
+func (p *Parser) HasErrors() bool {
+	return len(p.errors) > 0 || p.inErrorContext
+}
