@@ -69,3 +69,13 @@ If the TOON output summary is insufficient (e.g. you need to examine the full st
 Instead, read the full log file path printed in the success/failure footer:
 1. Copy the path to the log file (e.g. `/tmp/gfa-XXXXXXXX-XXXXXX/full_output.log`).
 2. Use your file reading tool to inspect its content directly.
+
+---
+
+## Code Modification Rules
+
+**Rule: Test Coverage**
+Whenever you make changes to source code (adding new features, fixing bugs, or modifying logic), you MUST ensure the changes have ample test coverage.
+- Check existing test files (`*_test.go`, etc.) and update them if they apply.
+- If no applicable tests exist, create new test cases to verify the new or modified logic.
+- Run the tests to ensure they pass and accurately cover the changes before completing the task.
