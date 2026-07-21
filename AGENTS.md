@@ -72,6 +72,17 @@ Instead, read the full log file path printed in the success/failure footer:
 
 ---
 
+## Agent Sandbox Compatibility
+
+If you are running in a restricted agent environment where you cannot write to `/tmp` (e.g. strict workspace-only access), you can override where `gfa` creates its log directories by setting the `GFA_LOG_DIR` environment variable.
+
+```bash
+# E.g. placing logs inside a workspace folder instead of /tmp
+GFA_LOG_DIR=./.gfa-logs gfa build
+```
+
+---
+
 ## Code Modification Rules
 
 **Rule: Test Coverage**

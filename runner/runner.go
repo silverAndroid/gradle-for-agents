@@ -42,7 +42,13 @@ func Run(gradleArgs []string, showWarnings bool, passThrough bool, currentVersio
 	}
 
 	timestamp := time.Now().Format("20060102-150405")
-	logDir := filepath.Join(os.TempDir(), fmt.Sprintf("gfa-%s", timestamp))
+	
+	baseLogDir := os.Getenv("GFA_LOG_DIR")
+	if baseLogDir == "" {
+		baseLogDir = os.TempDir()
+	}
+	
+	logDir := filepath.Join(baseLogDir, fmt.Sprintf("gfa-%s", timestamp))
 	if err := os.MkdirAll(logDir, 0755); err != nil {
 		fmt.Fprintf(os.Stderr, "ERROR: Failed to create log directory: %v\n", err)
 		return 1
